@@ -1,0 +1,47 @@
+zabbix_export:
+  version: '6.4'
+  media_types:
+    -
+      name: SMS
+      type: WEBHOOK
+      parameters:
+        -
+          name: hook_url
+        -
+          name: Message
+          value: '{ALERT.MESSAGE}'
+        -
+          name: Subject
+          value: '{ALERT.SUBJECT}'
+        -
+          name: To
+          value: '{ALERT.SENDTO}'
+      max_sessions: '0'
+      script: |
+        try {
+            var params = JSON.parse(value),
+                num = encodeURIComponent(params.To),
+                text = encodeURIComponent((params.Subject + "\n" + params.Message).replace(/^\n|\n$/g, '')),
+                data_str = "num=" + num + "&text=" + text,
+                req = new HttpRequest(),
+                response;
+        
+            if (params.HTTPProxy) {
+                req.setProxy(params.HTTPProxy);
+            }
+            req.addHeader('Content-Type: application/x-www-form-urlencoded');
+            Zabbix.log(4, '[ SMS ] Webhook request with value: ' + data_str);
+            response = req.post(params.hook_url, data_str);
+            Zabbix.log(4, '[ SMS ] Responded with code: ' + req.getStatus());
+        
+            if (req.getStatus() !== 200) {
+                throw response.error;
+            }
+            return 'OK';
+        }
+        catch (error) {
+            Zabbix.log(3, '[ SMS ] Sending failed. Error code: ' + req.getStatus());
+            throw 'Failed with error code: ' + req.getStatus();
+        }
+      timeout: 60s
+
