@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
+    <head>
+        <title>SMS Service</title>
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+        <style>
+            html, body {
+                width: 100%;
+                height: 90%;
+                margin: 0;
+                padding: 0;
+            }
+            textarea {
+                width: 100%;
+                resize: none;
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+            }
+            input, button, textarea, label {
+                font-size: 22px;
+            }
+            p {
+                margin-top: 1.5em;
+                margin-bottom: 1.5em;
+            }
+            .content {
+                width: inherit;
+                height: inherit;
+                display: flex;
+                margin: auto;
+                justify-content: center;
+                align-items: center;
+            }
+            .log {
+                width: 100%;
+                display: flex;
+                border: none;
+            }
+        </style>
+    </head>
+    <body>
+        <script>
+            document.addEventListener('keydown', (event) => {
+                if(event.ctrlKey && event.key == "Enter") {
+                    document.getElementsByTagName('button')[0].click();
+                }
+            });
+        </script>
+        <div class="content"/>
+            <div>
+                <form id="sms_form" action="sms.php?from_index=true" method="post" target="sms_frame"/>
+                    <p>
+                        <label>Номер получателя:</label>
+                        <br>
+                        <input 
+                            type="tel"
+                            id="num"
+                            name="num"
+                            pattern="\+[1-9]{1}[0-9]{3,14}"
+                            placeholder="Пример: +79031234567"
+                            value="+7"
+                            required
+                            autofocus
+                            onfocus="var l=this.value; this.value=''; this.value=l"
+                        />
+                    </p>
+                    <p>
+                        <label>Текст сообщения:</label>
+                        <br>
+                        <textarea type="text" id="text" name="text" rows="5" required></textarea>
+                    </p>
+                    <p>
+                        <button id="btn" type="submit" style="float: right;">
+                            Отправить
+                        </button>
+                    </p>
+                </form>
+                <br><br><br>
+                <iframe name="sms_frame" src="" scrolling="no" class="log"></iframe>
+            </div>
+        </div>
+    </body>
+</html>
